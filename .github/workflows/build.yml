@@ -1,0 +1,30 @@
+---
+name: Build latest images
+on:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "05 10 * * *" # 10:05am UTC everyday
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/README.md"
+      - "**/CONTRIBUTING.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  arch-bootc:
+    name: arch-bootc
+    uses: ./.github/workflows/reusable-build-bootc.yaml
+    with:
+      image-name: "arch-bootc"
+      image-tag: "latest"
+      #profiles: "kernel-rolling"
+    secrets: inherit
