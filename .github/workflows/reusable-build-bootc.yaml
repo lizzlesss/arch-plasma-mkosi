@@ -1,6 +1,17 @@
 ---
 name: Build Image
 on:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "09 */01 * * *" # 10:05am UTC everyday
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/README.md"
+      - "**/CONTRIBUTING.md"
   workflow_call:
     inputs:
       image-name:
