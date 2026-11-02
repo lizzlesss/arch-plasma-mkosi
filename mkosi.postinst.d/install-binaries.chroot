@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -xeuo pipefail
+
+cd .sources
+
+pacman -U ./kcgroups-pkgbuild/*.pkg.tar.* --noconfirm --disable-sandbox
