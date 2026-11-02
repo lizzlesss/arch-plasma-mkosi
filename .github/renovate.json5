@@ -12,6 +12,10 @@
       "matchUpdateTypes": ["pin", "pinDigest"]
     },
     {
+      "matchPackageNames": ["arch-bootc"],
+      "enabled": false
+    },
+    {
       "enabled": false,
       "matchUpdateTypes": ["digest", "pinDigest", "pin"],
       "matchDepTypes": ["container"],
