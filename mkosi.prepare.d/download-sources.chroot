@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -uexo pipefail
+
+if [ $1 != "build" ]; then
+  exit
+fi
+
+# Ensure the sources dir exists and is empty
+mkdir -p .sources
+rm -rf .sources/*
+pushd .sources
+
+# Import keys
+gpg --import ../keys/*.asc
+
+# Prepare PKGBUILDs for offline builds, apply patches.
+git clone https://github.com/pixelcluster/linux-dmemcg-pkgbuild.git
+pushd linux-dmemcg-pkgbuild
+env EUID=123 makepkg -o
+popd
+
+git clone https://github.com/pixelcluster/kcgroups-pkgbuild.git
+pushd kcgroups-pkgbuild
+env EUID=123 makepkg -o
+popd
