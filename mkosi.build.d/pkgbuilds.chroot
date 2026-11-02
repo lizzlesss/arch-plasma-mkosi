@@ -6,10 +6,6 @@ if [ "$container" != "mkosi" ]; then
     exec mkosi-chroot "$CHROOT_SCRIPT" "$@"
 fi
 
-# Build linux-dmemcg
 # We skip the PGP check here as we have already validated the sources in mkosi.prepare.d and we cannot import keys without a network connection
-cd .sources/linux-dmemcg-pkgbuild
-env EUID=123 makepkg --noprepare --clean --force --skippgpcheck
-
 cd .sources/kcgroups-pkgbuild
 env EUID=123 makepkg --noprepare --clean --force --skippgpcheck
