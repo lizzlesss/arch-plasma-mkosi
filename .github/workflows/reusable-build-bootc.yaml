@@ -275,6 +275,91 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
         run: echo "${GITHUB_TOKEN}" | podman login -u "${GITHUB_ACTOR}" --password-stdin "${REGISTRY}"
 
+      - name: Update podman and install just
+        shell: bash
+        run: |
+          set -eux
+          # Require the runner is ubuntu-24.04
+          test "$(. /usr/lib/os-release && echo "${ID}-${VERSION_ID}")" = "ubuntu-26.04"
+          # resolute is the next release. The azure.archive.ubuntu.com mirror only carries amd64.
+          # Other architectures like arm64 use ports.ubuntu.com/ubuntu-ports.
+          if [ "$(dpkg --print-architecture)" = "amd64" ]; then
+            mirror="http://azure.archive.ubuntu.com/ubuntu"
+          else
+            mirror="http://ports.ubuntu.com/ubuntu-ports"
+          fi
+          echo "deb ${mirror} resolute universe main" | sudo tee /etc/apt/sources.list.d/resolute.list
+          /bin/time -f '%E %C' sudo apt update
+          # skopeo is currently older in resolute for some reason hence --allow-downgrades
+          /bin/time -f '%E %C' sudo apt install -y --allow-downgrades crun/resolute podman/resolute
+          podman --version
+
+      - name: Fetch Build Outputs
+        if: inputs.publish
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: ${{ env.IMAGE_NAME }}-*
+          merge-multiple: true
+          path: /tmp/artifacts
+
+      - name: Publish manifest with unified architecture and sign
+        shell: bash
+        if: inputs.publish
+        env:
+          SIGNING_SECRET: ${{ secrets.SIGNING_SECRET }}
+          LABELS: ${{ steps.metadata.outputs.labels }}
+          TAGS: ${{ steps.metadata.outputs.tags }}
+        run: |
+          set -x
+
+          PRIVATE_KEY_FILE="$(mktemp)"
+          echo "${SIGNING_SECRET}" > "${PRIVATE_KEY_FILE}"
+          trap 'rm -f $PRIVATE_KEY_FILE' EXIT
+          sudo mkdir -p "/etc/containers/registries.d/"
+          echo -e "docker:\n  ${IMAGE_REGISTRY}:\n    use-sigstore-attachments: true" | sudo tee "/etc/containers/registries.d/${REPOSITORY_OWNER}.yaml"
+
+          for digest_file in /tmp/artifacts/*.txt; do
+            # Extract the platform from the file name
+            TARGET_PLATFORM="$(basename "${digest_file}" ".txt" | sed 's/.*-//g')"
+            TARGET_IMAGE="$(basename "${digest_file}" ".txt" | grep -Po ".*-" | sed 's/-$//')"
+            TARGET_DIGEST="$(< "${digest_file}")"
+
+            TARGET_MANIFEST="${IMAGE_REGISTRY}/${TARGET_IMAGE}"
+            if ! podman images | grep -F -e "${TARGET_MANIFEST}" ; then
+              podman manifest create "${TARGET_MANIFEST}"
+            fi
+
+            podman manifest add "${TARGET_MANIFEST}" "${TARGET_MANIFEST}@${TARGET_DIGEST}" --arch "${TARGET_PLATFORM}"
+          done
+
+          # We want one per image instead
+          for digest_file in $(find /tmp/artifacts/*.txt | sed 's/[-]$//' | uniq); do
+            TARGET_IMAGE="$(basename "${digest_file}")"
+            TARGET_MANIFEST="${IMAGE_REGISTRY}/${IMAGE_NAME}"
+            while IFS= read -r LABEL; do
+              podman manifest annotate --index --annotation "${LABEL}" "${TARGET_MANIFEST}"
+            done <<< "${LABELS}"
+            # HACK: push two times so layer annotations are present
+            # TODO: remove me when https://github.com/containers/podman/issues/27796 fixed
+            for _ in $(seq 2); do
+              while IFS= read -r TAG; do
+                podman manifest push --all=false --compression-format=zstd "${TARGET_MANIFEST}" "${TARGET_MANIFEST}:${TAG}" "--sign-passphrase-file=/dev/null" "--sign-by-sigstore-private-key=${PRIVATE_KEY_FILE}"
+              done <<< "${TAGS}"
+            done
+          donetainers.image.source=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/commit/${{ github.sha }}
+            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
+            org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/tree/${{ github.sha }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ env.DEFAULT_TAG }}.${{ needs.build_push.outputs.image_version }}
+
+      - name: Login to GitHub Container Registry
+        if: inputs.publish
+        env:
+          REGISTRY: ghcr.io
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: echo "${GITHUB_TOKEN}" | podman login -u "${GITHUB_ACTOR}" --password-stdin "${REGISTRY}"
+
       - name: Fetch Build Outputs
         if: inputs.publish
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
