@@ -280,7 +280,7 @@ jobs:
         run: |
           set -eux
           # Require the runner is ubuntu-24.04
-          test "$(. /usr/lib/os-release && echo "${ID}-${VERSION_ID}")" = "ubuntu-24.04"
+          test "$(. /usr/lib/os-release && echo "${ID}-${VERSION_ID}")" = "ubuntu-26.04"
           # resolute is the next release. The azure.archive.ubuntu.com mirror only carries amd64.
           # Other architectures like arm64 use ports.ubuntu.com/ubuntu-ports.
           if [ "$(dpkg --print-architecture)" = "amd64" ]; then
