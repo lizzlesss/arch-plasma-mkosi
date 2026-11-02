@@ -11,9 +11,6 @@ mkdir -p .sources
 rm -rf .sources/*
 pushd .sources
 
-# Import keys
-gpg --import ../keys/*.asc
-
 git clone https://github.com/pixelcluster/kcgroups-pkgbuild.git
 pushd kcgroups-pkgbuild
 env EUID=123 makepkg -o
