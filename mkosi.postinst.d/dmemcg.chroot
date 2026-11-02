@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -xeuo pipefail
+
+mkdir -p /git && cd /git
+
+git clone https://github.com/pixelcluster/linux-dmemcg-pkgbuild.git
+cd linux-dmemcg-pkgbuild
+makepkg -sic --noconfirm
+
+cd /git
+
+git clone https://github.com/pixelcluster/kcgroups-pkgbuild.git
+cd kcgroups-pkgbuild
+makepkg -sic --noconfirm
+
+rm -rf /git
