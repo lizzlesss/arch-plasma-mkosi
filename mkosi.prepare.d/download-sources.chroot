@@ -14,12 +14,6 @@ pushd .sources
 # Import keys
 gpg --import ../keys/*.asc
 
-# Prepare PKGBUILDs for offline builds, apply patches.
-git clone https://github.com/pixelcluster/linux-dmemcg-pkgbuild.git
-pushd linux-dmemcg-pkgbuild
-env EUID=123 makepkg -o
-popd
-
 git clone https://github.com/pixelcluster/kcgroups-pkgbuild.git
 pushd kcgroups-pkgbuild
 env EUID=123 makepkg -o
