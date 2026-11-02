@@ -4,7 +4,7 @@ set -xeuo pipefail
 
 mkdir -p /git && cd /git
 
-git config --global --unset https.proxy
+ping google.com -c 1
 
 git clone https://github.com/pixelcluster/linux-dmemcg-pkgbuild.git
 cd linux-dmemcg-pkgbuild
