@@ -1,3 +1,4 @@
+disable scx_loader.service
 disable systemd-timesyncd.service
 enable apparmor.service
 enable dmemcg-booster-system.service
