@@ -1,5 +1,0 @@
-disable systemd-timesyncd.service
-enable apparmor.service
-enable dmemcg-booster-system.service
-enable firewalld.service
-enable systemd-resolved.service
