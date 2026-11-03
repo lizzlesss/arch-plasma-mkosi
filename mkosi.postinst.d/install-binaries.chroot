@@ -1,8 +1,10 @@
-#!/usr/bin/env bash
+\#!/usr/bin/env bash
 
 set -xeuo pipefail
 
-cd .sources
+cd /sources
 
 pacman -U ./kcgroups-pkgbuild/*.pkg.tar.* --noconfirm --disable-sandbox
 pacman -U ./dmemcg-booster/*.pkg.tar.* --noconfirm --disable-sandbox
+
+rm -rf /sources
