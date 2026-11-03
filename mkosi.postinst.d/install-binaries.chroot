@@ -5,3 +5,4 @@ set -xeuo pipefail
 cd .sources
 
 pacman -U ./kcgroups-pkgbuild/*.pkg.tar.* --noconfirm --disable-sandbox
+pacman -U ./dmemcg-booster/*.pkg.tar.* --noconfirm --disable-sandbox

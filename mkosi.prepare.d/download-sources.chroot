@@ -15,3 +15,9 @@ git clone https://github.com/pixelcluster/kcgroups-pkgbuild.git
 pushd kcgroups-pkgbuild
 env EUID=123 makepkg -o
 popd
+
+mkdir ./dmemcg-booster
+pushd ./dmemcg-booster
+wget https://raw.githubusercontent.com/CachyOS/CachyOS-PKGBUILDS/refs/heads/master/dmemcg-cgroup/dmemcg-booster/PKGBUILD
+env EUID=123 makepkg -o
+popd
