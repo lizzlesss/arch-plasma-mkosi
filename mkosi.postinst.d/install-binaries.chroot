@@ -2,9 +2,9 @@
 
 set -xeuo pipefail
 
-cd /sources
+pushd .sources
 
 pacman -U ./kcgroups-pkgbuild/*.pkg.tar.* --noconfirm --disable-sandbox
 pacman -U ./dmemcg-booster/*.pkg.tar.* --noconfirm --disable-sandbox
 
-rm -rf /sources
+popd

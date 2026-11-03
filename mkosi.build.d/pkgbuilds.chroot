@@ -7,8 +7,11 @@ if [ "$container" != "mkosi" ]; then
 fi
 
 # We skip the PGP check here as we have already validated the sources in mkosi.prepare.d and we cannot import keys without a network connection
-cd /sources/kcgroups-pkgbuild
+pushd .sources
+pushd ./kcgroups-pkgbuild
 env EUID=123 makepkg --noprepare --clean --force --skippgpcheck
+popd
 
-cd /sources/dmemcg-booster
+pushd ./dmemcg-booster
 env EUID=123 makepkg --noprepare --clean --force --skippgpcheck
+popd

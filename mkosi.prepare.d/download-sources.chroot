@@ -6,19 +6,18 @@ if [ $1 != "build" ]; then
   exit
 fi
 
-# Ensure the sources dir exists and is empty
-mkdir -p /sources
-rm -rf /sources/*
-cd /sources
+mkdir -p .sources
+rm -rf .sources/*
+pushd .sources
 
 git clone https://github.com/pixelcluster/kcgroups-pkgbuild.git
-cd kcgroups-pkgbuild
+pushd kcgroups-pkgbuild
 env EUID=123 makepkg -o
-cd /sources
+popd
 
-mkdir -p /sources/dmemcg-booster
-cd /sources/dmemcg-booster
+mkdir ./dmemcg-booster
+pushd ./dmemcg-booster
 wget https://raw.githubusercontent.com/CachyOS/CachyOS-PKGBUILDS/refs/heads/master/dmemcg-cgroup/dmemcg-booster/PKGBUILD
 wget https://raw.githubusercontent.com/CachyOS/CachyOS-PKGBUILDS/refs/heads/master/dmemcg-cgroup/dmemcg-booster/dmemcg-booster.install
 env EUID=123 makepkg -o
-cd
+popd
