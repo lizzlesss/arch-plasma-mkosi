@@ -12,7 +12,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '20 */2 * * *'  # 13:15am UTC everyday - schedule the build *after* the latest Arch Linux Archive update
+    - cron: '20 */6 * * *'  # 13:15am UTC everyday - schedule the build *after* the latest Arch Linux Archive update
   merge_group:
   workflow_dispatch:
 
@@ -28,4 +28,13 @@ jobs:
       image-name: "arch-bootc"
       image-tag: "latest"
       #profiles: "kernel-rolling"
+    secrets: inherit
+
+  arch-bootc-nvidia:
+    name: arch-bootc-nvidia
+    uses: ./.github/workflows/reusable-build-bootc.yaml
+    with:
+      image-name: "arch-bootc-nvidia"
+      image-tag: "latest"
+      profiles: "nvidia"
     secrets: inherit
