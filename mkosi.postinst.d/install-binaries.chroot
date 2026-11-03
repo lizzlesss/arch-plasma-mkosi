@@ -7,4 +7,7 @@ pushd .sources
 pacman -U ./kcgroups-pkgbuild/*.pkg.tar.* --noconfirm --disable-sandbox
 pacman -U ./dmemcg-booster/*.pkg.tar.* --noconfirm --disable-sandbox
 
+# Remove debug packages
+pacman -R kcgroups-dmemcg-debug dmemcg-booster-debug --noconfirm --disable-sandbox
+
 popd
