@@ -19,5 +19,6 @@ popd
 mkdir ./dmemcg-booster
 pushd ./dmemcg-booster
 wget https://raw.githubusercontent.com/CachyOS/CachyOS-PKGBUILDS/refs/heads/master/dmemcg-cgroup/dmemcg-booster/PKGBUILD
+wget https://raw.githubusercontent.com/CachyOS/CachyOS-PKGBUILDS/refs/heads/master/dmemcg-cgroup/dmemcg-booster/dmemcg-booster.install
 env EUID=123 makepkg -o
 popd
