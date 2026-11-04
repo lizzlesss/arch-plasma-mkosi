@@ -1,3 +1,4 @@
+enable plasma-login.service
 enable xdg-desktop-portal.service
 enable xdg-desktop-portal-kde.service
 enable pipewire.service
