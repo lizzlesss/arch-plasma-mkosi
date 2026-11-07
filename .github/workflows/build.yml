@@ -12,7 +12,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '00 */12 * * *'  # 13:15am UTC everyday - schedule the build *after* the latest Arch Linux Archive update
+    - cron: '15 */6 * * *'  # 13:15am UTC everyday - schedule the build *after* the latest Arch Linux Archive update
   merge_group:
   workflow_dispatch:
 
