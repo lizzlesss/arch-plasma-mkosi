@@ -79,7 +79,7 @@ jobs:
         uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
 
       - name: Install mkosi
-        uses: systemd/mkosi@c4c3d793d0f6f0a2f26895de5ed9382396f36bb5
+        uses: systemd/mkosi@a6753e508681aa162cef4e5183f1a728c11c4d78
 
       - name: Set mkosi.version
         run: |
